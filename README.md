@@ -64,7 +64,7 @@ des bâtiments non-résidentiels de Seattle, à partir de leurs caractéristique
 
 ### Dataset
 
-- **Source** : [2016 Building Energy Benchmarking](https://data.seattle.gov/dataset/2016-Building-Energy-Benchmarking/2bpz-gwpy)
+- **Source** : 2016 Building Energy Benchmarking
 - **Taille initiale** : 3 376 bâtiments × 46 colonnes
 - **Taille finale** : 1 649 bâtiments × 40 colonnes (après nettoyage)
 - **Période** : Année 2016
@@ -175,24 +175,6 @@ Capte mieux les **interactions complexes** entre features grâce au **boosting**
 
 ---
 
-## 📁 Structure du Projet
-
-```
-Projet 3/
-├── README.md                                    # Ce fichier
-├── requirements.txt                             # Dépendances Python
-├── P3_template_modelistation_supervisee_data_scientist.ipynb  # Notebook principal
-├── data/
-│   └── 2016_Building_Energy_Benchmarking.csv   # Dataset brut
-├── docs/
-│   ├── 2016_Building_Energy_Benchmarking_data_profile.html  # Profiling
-│   ├── memeo_variables.md                      # Documentation variables
-│   └── note.md                                 # Notes projet
-└── env/                                        # Environnement virtuel (non versionné)
-```
-
----
-
 ## 🔧 Technologies Utilisées
 
 | Catégorie | Librairies |
@@ -236,20 +218,6 @@ Ces modèles permettent de :
 - Prioriser les actions d'efficacité énergétique selon les features importantes
 - Estimer l'impact de rénovations structurelles (surface, usage, sources d'énergie)
 - Guider les politiques publiques de réduction des émissions
-
----
-
-## 👤 Auteur
-
-**Clément**  
-Projet 3 - Parcours Data Scientist - OpenClassrooms  
-Décembre 2025
-
----
-
-## 📝 Licence
-
-Ce projet est réalisé dans le cadre d'une formation OpenClassrooms.
 
 ---
 
