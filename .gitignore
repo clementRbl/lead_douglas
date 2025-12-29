@@ -1,0 +1,12 @@
+# Environnement virtuel
+env/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Python
+__pycache__/
+*.pyc
+
+# Système
+.DS_Store
