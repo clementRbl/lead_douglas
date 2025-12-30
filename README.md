@@ -16,8 +16,7 @@
 
 ```bash
 # 1. Cloner le dépôt
-git clone <URL_DU_REPO>
-cd "Projet 3"
+git clone
 
 # 2. Créer un environnement virtuel
 python3 -m venv env
@@ -94,27 +93,27 @@ des bâtiments non-résidentiels de Seattle, à partir de leurs caractéristique
 
 | Métrique | Valeur |
 |----------|---------|
-| **Meilleur modèle** | Random Forest (Bagging) |
-| **R² Test** | **0.7479** (75% variance expliquée) |
-| **R² Train** | 0.9617 |
-| **Overfitting** | 21.4% (acceptable pour RF) |
-| **Top Features** | LargestPropertyUseTypeGFA (17%), PropertyGFATotal (14%) |
+| **Meilleur modèle** | Random Forest (Bagging) - Optimisé |
+| **R² CV (Base)** | 0.7159 (72% variance expliquée) |
+| **R² CV (Optimisé)** | **0.7288** (73% variance expliquée) |
+| **Amélioration** | **+1.8%** |
+| **Top Features** | PropertyGFABuilding(s) (16.78%), PropertyGFATotal (13.71%), LargestPropertyUseTypeGFA (9.31%) |
 
 **💡 Pourquoi Random Forest gagne ?**  
-Plus robuste aux outliers grâce au **bagging** (parallélisation de 100 arbres).
+Plus robuste aux outliers grâce au **bagging** (parallélisation d'arbres). L'optimisation via GridSearchCV (144 combinaisons testées) a permis d'améliorer significativement les performances (+1.8%).
 
 ### Target 2 - Émissions de CO2
 
 | Métrique | Valeur |
 |----------|---------|
-| **Meilleur modèle** | LightGBM (Boosting) 🚀 |
-| **R² Test** | **0.8967** (90% variance expliquée) |
-| **R² Train** | 0.9805 |
-| **Overfitting** | 9.4% (excellent !) |
-| **Top Features** | EnergyPerSurface (17.5%), SurfaceGasInteraction (13.9%) |
+| **Meilleur modèle** | LightGBM (Boosting) - Optimisé 🚀 |
+| **R² CV (Base)** | 0.9214 (92% variance expliquée) |
+| **R² CV (Optimisé)** | **0.9218** (92% variance expliquée) |
+| **Amélioration** | **+0.05%** |
+| **Top Features** | SiteEnergyUse (16.97%), EnergyPerSurface (12.05%), DistanceToCenter (10.15%) |
 
 **💡 Pourquoi LightGBM gagne ?**  
-Capte mieux les **interactions complexes** entre features grâce au **boosting** séquentiel.
+Capte mieux les **interactions complexes** entre features grâce au **boosting** séquentiel. L'optimisation via GridSearchCV (108 combinaisons testées) a confirmé les hyperparamètres quasi-optimaux (+0.05%).
 
 ---
 
@@ -142,16 +141,22 @@ Capte mieux les **interactions complexes** entre features grâce au **boosting**
 3. Support Vector Regressor (SVR)
 4. LightGBM (boosting) ⭐
 
+**Architecture :**
+- **Pipeline sklearn** : Encapsule preprocessing (ColumnTransformer) + modèle
+- **Cross-Validation K-Fold** : K=5 splits pour évaluation robuste
+- **Avantage** : Pas de data leakage, évaluation sur 5 validations différentes
+
 **Optimisation :**
-- GridSearchCV avec 216 combinaisons (Target 1) et 24 combinaisons (Target 2)
-- **Conclusion** : Les modèles par défaut surpassent les versions optimisées !
+- **GridSearchCV avec Pipeline + CV** : Optimisation robuste des hyperparamètres
+- Target 1 (Energy) : 144 combinaisons testées → **+1.8% d'amélioration**
+- Target 2 (CO2) : 108 combinaisons testées → **+0.05% d'amélioration**
 
 ### 4. Évaluation
 
-- **Métriques** : R², RMSE, MAE
-- **Validation** : Train/Test split (80/20)
-- **Feature Importance** : Permutation importance
-- **Analyse overfitting** : Écart Train/Test
+- **Métriques** : R² CV (mean±std), RMSE CV, MAE CV
+- **Validation** : Cross-Validation K-Fold (K=5) - Pas de Train/Test unique
+- **Feature Importance** : Extraction depuis modèles entraînés
+- **Analyse overfitting** : Écart R² Train - R² CV (Overfit Gap)
 
 ---
 
@@ -167,8 +172,8 @@ Capte mieux les **interactions complexes** entre features grâce au **boosting**
 3. **La transformation log est essentielle**  
    Distribution asymétrique → log1p(target) améliore drastiquement les performances
 
-4. **GridSearchCV n'améliore pas toujours**  
-   Modèles par défaut souvent meilleurs avec de bonnes features (-3% et -11.8%)
+4. **GridSearchCV avec Pipeline + CV améliore les performances**  
+   L'approche robuste (Pipeline + Cross-Validation) permet une optimisation efficace (+1.8% et +0.05%)
 
 5. **Les variables GFA (surface par usage) sont prédictives**  
    `LargestPropertyUseTypeGFA` est le 2ème prédicteur le plus fort (+0.846 corrélation)
@@ -189,10 +194,12 @@ Capte mieux les **interactions complexes** entre features grâce au **boosting**
 
 ## 📊 Tableau Récapitulatif Final
 
-| Target | Meilleur Modèle | R² Test | Algorithme | Raison |
-|--------|----------------|---------|------------|--------|
-| **Énergie** | Random Forest | **0.7479** | Bagging | Robuste aux outliers |
-| **CO2** | LightGBM | **0.8967** | Boosting | Capte les interactions |
+| Target      | Meilleur Modèle        | R² CV (Base) | R² CV (Optimisé) | Amélioration | Algorithme |
+| ----------- | ---------------------- | ------------ | ---------------- | ------------ | ---------- |
+| **Énergie** | Random Forest          | 0.7159       | **0.7288**       | **+1.8%**    | Bagging    |
+| **CO2**     | LightGBM               | 0.9214       | **0.9218**       | **+0.05%**   | Boosting   |
+
+**💡 Conclusion :** GridSearchCV avec Pipeline + Cross-Validation a permis d'optimiser les deux modèles de manière robuste, évitant la suroptimisation sur un seul split de données.
 
 ---
 
